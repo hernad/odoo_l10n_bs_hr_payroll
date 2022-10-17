@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="DOPR_IZ" model="hr.salary.rule.category">
+        <field name="name">Doprinosi IZ plate</field>
+        <field name="code">DOPR_IZ</field>
+    </record>
+
+    <record id="DOPR_NA" model="hr.salary.rule.category">
+        <field name="name">Doprinosi NA platu</field>
+        <field name="code">DOPR_NA</field>
+    </record>
+
+
+    <!-- PARAMS Doprinosi IZ ... -->
+    <record id="rule_parameter_dopr_iz_pio" model="hr.rule.parameter">
+        <field name="name">Dopr.IZ PIO</field>
+        <field name="code">D_IZ_PIO</field>
+        <!-- Bosnia and Herzegovina -->
+        <field name="country_id" ref="base.ba"/>
+    </record>
+    <record id="rule_parameter_dopr_iz_pio_2020" model="hr.rule.parameter.value">
+        <field name="parameter_value">17</field>
+        <field name="rule_parameter_id" ref="rule_parameter_dopr_iz_pio"/>
+        <field name="date_from" eval="datetime(2020, 1, 1).date()"/>
+    </record>
+
+    <record id="rule_parameter_dopr_iz_zdr" model="hr.rule.parameter">
+        <field name="name">Dopr.IZ ZDR</field>
+        <field name="code">D_IZ_ZDR</field>
+        <field name="country_id" ref="base.ba"/>
+    </record>
+    <record id="rule_parameter_dopr_iz_zdr_2020" model="hr.rule.parameter.value">
+        <field name="parameter_value">12.5</field>
+        <field name="rule_parameter_id" ref="rule_parameter_dopr_iz_zdr"/>
+        <field name="date_from" eval="datetime(2020, 1, 1).date()"/>
+    </record>
+
+    <record id="rule_parameter_dopr_iz_nez" model="hr.rule.parameter">
+        <field name="name">Dopr.IZ Nezap</field>
+        <field name="code">D_IZ_NEZ</field>
+        <field name="country_id" ref="base.ba"/>
+    </record>
+    <record id="rule_parameter_dopr_iz_nez_2020" model="hr.rule.parameter.value">
+        <field name="parameter_value">1.5</field>
+        <field name="rule_parameter_id" ref="rule_parameter_dopr_iz_nez"/>
+        <field name="date_from" eval="datetime(2020, 1, 1).date()"/>
+    </record>
+
+    <!-- PARAMS Doprinosi NA ... -->
+    <record id="rule_parameter_dopr_na_pio" model="hr.rule.parameter">
+        <field name="name">Dopr.NA PIO</field>
+        <field name="code">D_NA_PIO</field>
+        <!-- Bosnia and Herzegovina -->
+        <field name="country_id" ref="base.ba"/>
+    </record>
+    <record id="rule_parameter_dopr_na_pio_2020" model="hr.rule.parameter.value">
+        <field name="parameter_value">6.0</field>
+        <field name="rule_parameter_id" ref="rule_parameter_dopr_na_pio"/>
+        <field name="date_from" eval="datetime(2020, 1, 1).date()"/>
+    </record>
+
+    <record id="rule_parameter_dopr_na_zdr" model="hr.rule.parameter">
+        <field name="name">Dopr.NA ZDR</field>
+        <field name="code">D_NA_ZDR</field>
+        <field name="country_id" ref="base.ba"/>
+    </record>
+    <record id="rule_parameter_dopr_na_zdr_2020" model="hr.rule.parameter.value">
+        <field name="parameter_value">4.0</field>
+        <field name="rule_parameter_id" ref="rule_parameter_dopr_na_zdr"/>
+        <field name="date_from" eval="datetime(2020, 1, 1).date()"/>
+    </record>
+
+    <record id="rule_parameter_dopr_na_nez" model="hr.rule.parameter">
+        <field name="name">Dopr.NA Nezap</field>
+        <field name="code">D_NA_NEZ</field>
+        <field name="country_id" ref="base.ba"/>
+    </record>
+    <record id="rule_parameter_dopr_na_nez_2020" model="hr.rule.parameter.value">
+        <field name="parameter_value">0.5</field>
+        <field name="rule_parameter_id" ref="rule_parameter_dopr_na_nez"/>
+        <field name="date_from" eval="datetime(2020, 1, 1).date()"/>
+    </record>
+
+
+    <record id="NETO" model="hr.salary.rule.category">
+        <field name="name">Neto plata</field>
+        <field name="code">NETO</field>
+    </record>
+    <record id="NETO2" model="hr.salary.rule.category">
+        <field name="name">Neto plata poslije poreza</field>
+        <field name="code">NETO2</field>
+    </record>
+
+    <record id="hr_salary_rule_neto" model="hr.salary.rule">
+        <field name="name">Neto plata prije poreza</field>
+        <field name="sequence" eval="100" />
+        <field name="code">NETO</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = contract.wage * 0.10
+        </field>
+    </record>
+
+    <!-- Doprinosi NA rules ... -->
+    <record id="hr_salary_rule_dopr_na" model="hr.salary.rule">
+        <field name="name">Doprinosi NA platu</field>
+        <field name="sequence" eval="200" />
+        <field name="code">D_NA</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.DOPR_NA" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result_rate = float(payslip.rule_parameter('D_NA_PIO')) + float(payslip.rule_parameter('D_NA_ZDR')) + float(payslip.rule_parameter('D_NA_NEZ'))
+result = categories.BRUTO
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_dopr_na_pio" model="hr.salary.rule">
+        <field name="name">Doprinosi NA PIO</field>
+        <field name="sequence" eval="201" />
+        <field name="code">D_NA_PIO</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.DOPR_NA" />
+        <field name="parent_rule_id" ref="hr_salary_rule_dopr_na" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result_rate = float(payslip.rule_parameter('D_NA_PIO'))
+result = categories.BRUTO
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_dopr_na_zdr" model="hr.salary.rule">
+        <field name="name">Doprinos NA Zdravstvo</field>
+        <field name="sequence" eval="202" />
+        <field name="code">D_NA_ZDR</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.DOPR_NA" />
+        <field name="parent_rule_id" ref="hr_salary_rule_dopr_na" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result_rate = float(payslip.rule_parameter('D_NA_ZDR'))
+result = categories.BRUTO
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_dopr_na_nez" model="hr.salary.rule">
+        <field name="name">Doprinos NA Nezaposlenost</field>
+        <field name="sequence" eval="201" />
+        <field name="code">D_NA_NEZ</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.DOPR_NA" />
+        <field name="parent_rule_id" ref="hr_salary_rule_dopr_na" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result_rate = float(payslip.rule_parameter('D_NA_PIO'))
+result = categories.BRUTO
+        </field>
+    </record>
+
+    <!-- Doprinosi IZ rules ... -->
+    <record id="hr_salary_rule_dopr_iz" model="hr.salary.rule">
+        <field name="name">Doprinosi IZ plate</field>
+        <field name="sequence" eval="250" />
+        <field name="code">D_IZ</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.DOPR_IZ" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result_rate = float(payslip.rule_parameter('D_IZ_PIO')) + float(payslip.rule_parameter('D_IZ_ZDR')) + float(payslip.rule_parameter('D_IZ_NEZ'))
+result = categories.BRUTO
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_dopr_iz_pio" model="hr.salary.rule">
+        <field name="name">Doprinos IZ PIO</field>
+        <field name="sequence" eval="251" />
+        <field name="code">D_IZ_PIO</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.DOPR_IZ" />
+        <field name="parent_rule_id" ref="hr_salary_rule_dopr_iz" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result_rate = float(payslip.rule_parameter('D_IZ_PIO'))
+result = categories.BRUTO
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_dopr_iz_zdr" model="hr.salary.rule">
+        <field name="name">Doprinos IZ ZDRAVSTVO</field>
+        <field name="sequence" eval="252" />
+        <field name="code">D_IZ_ZDR</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.DOPR_IZ" />
+        <field name="parent_rule_id" ref="hr_salary_rule_dopr_iz" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result_rate = float(payslip.rule_parameter('D_IZ_ZDR'))
+result = categories.BRUTO
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_dopr_iz_nez" model="hr.salary.rule">
+        <field name="name">Doprinos IZ Nezaposleni</field>
+        <field name="sequence" eval="253" />
+        <field name="code">D_IZ_NEZ</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.DOPR_IZ" />
+        <field name="parent_rule_id" ref="hr_salary_rule_dopr_iz" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result_rate = float(payslip.rule_parameter('D_IZ_NEZ'))
+result = categories.BRUTO
+        </field>
+    </record>
+
+
+    <record id="structure_fbih" model="hr.payroll.structure">
+        <field name="code">BASEF</field>
+        <field name="name">Standardni obračun FBiH </field>
+        <field
+            eval="[(6, 0, [ref('hr_salary_rule_neto'), ref('hr_salary_rule_dopr_na'),ref('hr_salary_rule_dopr_iz')])]"
+            name="rule_ids"
+        />
+        <field name="company_id" ref="base.main_company" />
+    </record>
+</odoo>
