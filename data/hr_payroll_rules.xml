@@ -226,4 +226,89 @@ result = categories.BRUTO
         />
         <field name="company_id" ref="base.main_company" />
     </record>
+
+    <record id="dep_proizvodnja" model="hr.department">
+        <field name="name">Proizvodnja</field>
+    </record>
+
+    <record id="job_brav_cjev_3" model="hr.job">
+        <field name="name">Monter bravar cjevar III klase</field>
+        <field name="department_id" ref="dep_proizvodnja"/>
+        <!--
+        <field name="no_of_recruitment">5</field>
+        -->
+        <field name="contract_type_id" ref="hr.contract_type_permanent"/>
+    </record>
+
+    <record id="job_varilac" model="hr.job">
+        <field name="name">Varilac</field>
+        <field name="department_id" ref="dep_proizvodnja"/>
+        <!--
+        <field name="no_of_recruitment">5</field>
+        -->
+        <field name="contract_type_id" ref="hr.contract_type_permanent"/>
+    </record>
+
+    <record id="hr_employee_bs_fbih01" model="hr.employee">
+        <field name="company_id" ref="base.main_company" />
+        <field name="active" eval="1" />
+        <field name="name">Test radnik FBiH01</field>
+        <field name="marital"></field>
+        <field name="certificate"></field>
+        <field name="country_id" ref="base.ba"/>
+        <field name="identification_id">0301970199919</field>
+        <field name="passport_id">PSBH0001</field>
+        <field name="work_phone">+38761141311</field>
+    </record>
+
+
+    <record id="hr_employee_bs_fbih02" model="hr.employee">
+        <field name="company_id" ref="base.main_company" />
+        <field name="marital"></field>
+        <field name="certificate"></field>
+        <field name="active" eval="1" />
+        <field name="country_id" ref="base.ba"/>
+        <field name="name">Test radnik FBiH02</field>
+        <field name="identification_id">2201977199910</field>
+        <field name="passport_id">PSBH00200</field>
+        <field name="work_phone">+38761477105</field>
+    </record>
+
+
+    <record id="hr_contract_test01" model="hr.contract">
+        <field name="name">FBiH01 Contract 2020</field>
+        <field name="state">open</field>
+        <field name="department_id" ref="dep_proizvodnja"/>
+        <field name="job_id" ref="job_varilac"/>
+        <field name="date_start" eval="datetime(2020, 1, 1).date()" />
+        <!--
+        <field name="date_end" eval="datetime(2023, 1, 1).date()" />
+        -->
+        <field name="struct_id" ref="structure_fbih" />
+        <field name="structure_type_id" ref="hr_contract.structure_type_employee" />
+        <field name="employee_id" ref="hr_employee_bs_fbih01" />
+        <field name="notes">Contract for Test Radnik FBiH01</field>
+        <field eval="1000.00" name="wage" />
+    </record>
+
+    <record id="hr_contract_test02" model="hr.contract">
+        <field name="name">FBiH02 Contract 2020</field>
+        <field name="department_id" ref="dep_proizvodnja"/>
+        <field name="job_id" ref="job_brav_cjev_3"/>
+        <!-- draft,open,close,cancel -->
+        <field name="state">open</field>
+        <field name="date_start" eval="datetime(2020, 2, 2).date()" />
+        <!--
+        <field name="date_end" eval="datetime(2023, 1, 1).date()" />
+        -->
+        <field name="struct_id" ref="structure_fbih" />
+        <!--
+        https://www.dfalaw.co.uk/faq_type/what-is-the-difference-between-an-employee-and-a-worker/
+        -->
+        <field name="structure_type_id" ref="hr_contract.structure_type_employee" />
+        <field name="employee_id" ref="hr_employee_bs_fbih02" />
+        <field name="notes">Contract for Test Radnik FBiH02</field>
+        <field eval="1200.00" name="wage" />
+    </record>
+
 </odoo>
