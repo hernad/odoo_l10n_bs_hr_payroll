@@ -1,6 +1,6 @@
 {
     'name': 'Payroll - Bosnia and Herzegovina',
-    'version': '1.1',
+    'version': '1.2',
     'author': "bring.out Sarajevo, BiH",
     'category': 'Human Resources/Payroll',
     'icon': '/l10n_bs_hr_payroll/static/description/icon.png',
@@ -11,6 +11,7 @@
         "data/hr_payroll_rules.xml",
         "data/hr_payroll_rules_delete.xml",
         "views/hr_payroll_contract_view.xml",
+        "data/hr_holiday_views.xml",
     ],
     'installable': True,
     'application': False,

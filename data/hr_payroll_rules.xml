@@ -311,4 +311,17 @@ result = categories.BRUTO
         <field eval="1200.00" name="wage" />
     </record>
 
+    <!-- Čekanje - privremeni prekid rada -->
+    <record id="holiday_status_unpaid" model="hr.leave.type">
+        <field name="name">Čekanje</field>
+        <field name="requires_allocation">no</field>
+        <!--
+            <field name="leave_validation_type">both</field>
+            <field name="allocation_validation_type">officer</field>
+        -->
+        <field name="request_unit">hour</field>
+        <field name="unpaid" eval="False"/>
+        <field name="color">5</field>
+    </record>
+
 </odoo>
