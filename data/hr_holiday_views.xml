@@ -66,7 +66,7 @@
         <field name="model">hr.leave</field>
         <field name="priority">10</field>
         <field name="arch" type="xml">
-            <form string="Time Off Request v14">
+            <form string="Zahtjevi za odsustvo (svi)">
             <field name="can_reset" invisible="1"/>
             <field name="can_approve" invisible="1"/>
             <header>
@@ -110,36 +110,34 @@
                 <group>
                     <group>
 
-                        <label for="request_date_from" string="Dates"/>
+                        <label for="request_date_from" string="Datumi:"/>
                         <div>
                             <field name="date_from" invisible="1"/>
                             <field name="date_to" invisible="1"/>
                             <div class="o_row o_row_readonly o_hr_holidays_dates">
-                                <span class="oe_inline"
-                                    attrs="{'invisible': ['|', ('request_unit_half', '=', True), ('request_unit_hours', '=', True)]}">
-                                    From
-                                </span>
-                                <field name="request_date_from" class="oe_inline" nolabel="1"
-                                    attrs="{'readonly': [('state', 'not in', ('draft', 'confirm'))],
-                                            'required': ['|', ('date_from', '=', False), ('date_to', '=', False)]
-                                            }"/>
-                                <span class="oe_inline"
-                                    attrs="{'invisible': ['|', ('request_unit_half', '=', True), ('request_unit_hours', '=', True)]}">
-                                    To
-                                </span>
-                                <field name="request_date_to" class="oe_inline"
-                                    attrs="{
-                                        'readonly': [('state', 'not in', ('draft', 'confirm'))],
-                                        'invisible': ['|', ('request_unit_half', '=', True), ('request_unit_hours', '=', True)],
+
+                                <!-- half day or custom hours: only show one date -->
+                                <label for="request_date_from" attrs="{'invisible': [('request_unit_half', '=', False), ('request_unit_hours', '=', False)]}" string="Date" />
+                                <div class="o_row" attrs="{'invisible': [('request_unit_half', '=', False), ('request_unit_hours', '=', False)]}">
+                                    <field name="request_date_from" class="oe_inline" string="Date" />
+                                    <field name="request_date_from_period" attrs="{'invisible': [('request_unit_half', '!=', True)], 'required': [('request_unit_half', '=', True)]}"/>
+                                </div>
+
+                                <!-- full days: show date start/end with daterange -->
+
+                                <!--
+                                <label for="request_date_from" attrs="{'invisible': ['|', ('request_unit_half', '=', True), ('request_unit_hours', '=', True)]}" string="Datumi" />
+                                -->
+                                <div class="o_row" attrs="{'invisible': ['|', ('request_unit_half', '=', True), ('request_unit_hours', '=', True)]}">
+                                    <span class="text-muted">Od</span>
+                                    <field name="request_date_from" nolabel="1" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft', 'confirm'))],
                                         'required': ['|', ('date_from', '=', False), ('date_to', '=', False)]
-                                    }"/>
-                                <field name="request_date_from_period" class="oe_inline"
-                                    string="In"
-                                    options="{'horizontal': True}"
-                                    attrs="{
-                                        'readonly': [('state', 'not in', ('draft', 'confirm'))],
-                                        'required': [('request_unit_half', '=', True)],
-                                        'invisible': [('request_unit_half', '=', False)]}"/>
+                                        }" widget="daterange" options="{'related_end_date': 'request_date_to'}" />
+                                    <span class="text-muted">Do</span>
+                                    <field name="request_date_to" nolabel="1" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft', 'confirm'))],
+                                        'required': ['|', ('date_from', '=', False), ('date_to', '=', False)]
+                                        }" widget="daterange" options="{'related_end_date': 'request_date_from'}" />
+                                </div>
                             </div>
                             <div class="o_row o_row_readonly oe_edit_only" style="margin-left: -2px;">
                                 <field name="request_unit_half" attrs="{
@@ -280,7 +278,7 @@
     </record>
 
     <record id="hr_leave_action_action_approve_department_v14" model="ir.actions.act_window">
-        <field name="name">All Time Off v14</field>
+        <field name="name">Zahtjevi za odsustvo (svi)</field>
         <field name="res_model">hr.leave</field>
         <field name="view_mode">tree,calendar</field>
         <field name="search_view_id" ref="l10n_bs_hr_payroll.hr_leave_view_search_manager_v14" />
@@ -302,7 +300,7 @@
         <field name="model">hr.leave</field>
         <field name="priority" eval="2"/>
         <field name="arch" type="xml">
-            <calendar string="Activity" date_start="date_from" date_stop="date_to" color="holiday_status_id" mode="month" quick_add="false" form_view_id="hr_leave_view_form_manager_v14">
+            <calendar string="Activity" date_start="date_from" date_stop="date_to" color="color" mode="month" quick_add="false" form_view_id="hr_leave_view_form_manager_v14">
                 <field name="name"/>
             </calendar>
         </field>
