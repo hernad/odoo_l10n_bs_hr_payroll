@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
+     <!-- ====== Odsustva ===== -->
+
+    <record id="leave_cekanje" model="hr.leave.type">
+        <field name="name">Čekanje</field>
+        <field name="requires_allocation">no</field>
+        <!--
+            <field name="leave_validation_type">both</field>
+            <field name="allocation_validation_type">officer</field>
+        -->
+        <field name="request_unit">hour</field>
+        <field name="unpaid" eval="False"/>
+        <field name="color">5</field>
+    </record>
+
+    <record id="leave_rod_ods" model="hr.leave.type">
+        <field name="name">Roditeljsko odsustvo</field>
+        <field name="requires_allocation">no</field>
+        <field name="request_unit">hour</field>
+        <field name="unpaid" eval="True"/>
+        <field name="color">6</field>
+    </record>
+
+    <!-- ========== Kategorije =============== -->
     <record id="DOPR_IZ" model="hr.salary.rule.category">
         <field name="name">Doprinosi IZ plate</field>
         <field name="code">DOPR_IZ</field>
@@ -9,6 +32,106 @@
     <record id="DOPR_NA" model="hr.salary.rule.category">
         <field name="name">Doprinosi NA platu</field>
         <field name="code">DOPR_NA</field>
+    </record>
+
+    <record id="NETO" model="hr.salary.rule.category">
+        <field name="name">Neto primanja</field>
+        <field name="code">NETO</field>
+    </record>
+
+    <record id="NETO_POS" model="hr.salary.rule.category">
+        <field name="name">Neto plata poslije poreza</field>
+        <field name="code">NETO_POS</field>
+    </record>
+
+    <record id="BRUTO" model="hr.salary.rule.category">
+        <field name="name">Bruto primanja</field>
+        <field name="code">BRUTO</field>
+    </record>
+
+    <record id="NAKN" model="hr.salary.rule.category">
+        <field name="name">Naknade</field>
+        <field name="code">NAKN</field>
+    </record>
+
+    <record id="OBUST" model="hr.salary.rule.category">
+        <field name="name">Obustave</field>
+        <field name="code">OBUST</field>
+    </record>
+
+
+    <!-- ============ PARAMETRI plate =========== -->
+
+    <!-- Koeficijent bruto osnove FBiH -->
+    <record id="rule_param_koef_bo" model="hr.rule.parameter">
+        <field name="name">Koef Bruto osnove</field>
+        <field name="code">KOEF_BO</field>
+        <field name="country_id" ref="base.ba"/>
+    </record>
+    <record id="rule_param_koef_bo_2020" model="hr.rule.parameter.value">
+        <field name="parameter_value">144.9275</field>
+        <field name="rule_parameter_id" ref="rule_param_koef_bo"/>
+        <field name="date_from" eval="datetime(2020, 1, 1).date()"/>
+    </record>
+
+    <!-- minimalna neto plata FBiH 01.01.2022 -->
+    <record id="rule_param_min_neto" model="hr.rule.parameter">
+        <field name="name">Minimalna neto plata FBiH</field>
+        <field name="code">MIN_NETO_FBiH</field>
+        <field name="country_id" ref="base.ba"/>
+    </record>
+    <record id="rule_param_min_neto_2022" model="hr.rule.parameter.value">
+        <field name="parameter_value">543.00</field>
+        <field name="rule_parameter_id" ref="rule_param_min_neto"/>
+        <field name="date_from" eval="datetime(2022, 1, 1).date()"/>
+    </record>
+
+    <!-- minimalna neto satnica opšti kolektivni ugovor FBiH 01.01.2022 -->
+    <record id="rule_param_min_neto_sat" model="hr.rule.parameter">
+        <field name="name">Minimalna neto satnica FBiH</field>
+        <field name="code">M_N_S_FBiH</field>
+        <field name="country_id" ref="base.ba"/>
+    </record>
+    <record id="rule_param_min_neto_sat_2022" model="hr.rule.parameter.value">
+        <field name="parameter_value">2.31</field>
+        <field name="rule_parameter_id" ref="rule_param_min_neto_sat"/>
+        <field name="date_from" eval="datetime(2022, 1, 1).date()"/>
+    </record>
+
+    <!-- minimalna neto satnica granski ugovor metalaca FBiH 01.01.2022 -->
+    <record id="rule_param_min_neto_sat_met" model="hr.rule.parameter">
+        <field name="name">Min neto satnica granski ugovor metalci FBiH</field>
+        <field name="code">M_N_S_MET_FBIH</field>
+        <field name="country_id" ref="base.ba"/>
+    </record>
+    <record id="rule_param_min_neto_sat_met_2022" model="hr.rule.parameter.value">
+        <field name="parameter_value">3.5</field>
+        <field name="rule_parameter_id" ref="rule_param_min_neto_sat_met"/>
+        <field name="date_from" eval="datetime(2022, 1, 1).date()"/>
+    </record>
+
+    <!-- Prosječna neto plata FBiH 2022/07 -->
+    <record id="rule_param_prosj_neto_pl" model="hr.rule.parameter">
+        <field name="name">Prosječna neto plata FBiH</field>
+        <field name="code">PROS_N_P_FBIH</field>
+        <field name="country_id" ref="base.ba"/>
+    </record>
+    <record id="rule_param_koef_bo_2022_07" model="hr.rule.parameter.value">
+        <field name="parameter_value">1110.00</field>
+        <field name="rule_parameter_id" ref="rule_param_prosj_neto_pl"/>
+        <field name="date_from" eval="datetime(2022, 7, 1).date()"/>
+    </record>
+
+    <!-- Vrijednost boda 2022/07 -->
+    <record id="rule_param_vrbod" model="hr.rule.parameter">
+        <field name="name">Vrijednost boda</field>
+        <field name="code">VRBOD</field>
+        <field name="country_id" ref="base.ba"/>
+    </record>
+    <record id="rule_param_vrbod_2022_07" model="hr.rule.parameter.value">
+        <field name="parameter_value">388.00</field>
+        <field name="rule_parameter_id" ref="rule_param_vrbod"/>
+        <field name="date_from" eval="datetime(2022, 7, 1).date()"/>
     </record>
 
 
@@ -82,25 +205,174 @@
         <field name="date_from" eval="datetime(2020, 1, 1).date()"/>
     </record>
 
+    <!-- =================== PRAVILA ======================= -->
 
-    <record id="NETO" model="hr.salary.rule.category">
-        <field name="name">Neto plata</field>
-        <field name="code">NETO</field>
+
+    <record id="hr_salary_rule_mr" model="hr.salary.rule">
+        <field name="name">Minuli rad</field>
+        <field name="sequence" eval="101" />
+        <field name="code">MINRAD</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = 0
+        </field>
     </record>
-    <record id="NETO2" model="hr.salary.rule.category">
-        <field name="name">Neto plata poslije poreza</field>
-        <field name="code">NETO2</field>
+
+    <record id="hr_salary_rule_dpraz" model="hr.salary.rule">
+        <field name="name">Državni praznik</field>
+        <field name="sequence" eval="102" />
+        <field name="code">DPRAZ</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = 0
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_r_dpraz" model="hr.salary.rule">
+        <field name="name">Rad na državni praznik</field>
+        <field name="sequence" eval="103" />
+        <field name="code">R_DPRAZ</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = 0
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_nr" model="hr.salary.rule">
+        <field name="name">Noćni rad</field>
+        <field name="sequence" eval="104" />
+        <field name="code">RAD_NOC</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = 0
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_ter" model="hr.salary.rule">
+        <field name="name">Rad na terenu</field>
+        <field name="sequence" eval="105" />
+        <field name="code">RAD_TER</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = 0
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_to_o" model="hr.salary.rule">
+        <field name="name">Topli obrok (oporezivi dio)</field>
+        <field name="sequence" eval="106" />
+        <field name="code">TO_O</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = 0
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_godis" model="hr.salary.rule">
+        <field name="name">Godišnji odmor</field>
+        <field name="sequence" eval="107" />
+        <field name="code">GODIS</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = 0
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_bolov" model="hr.salary.rule">
+        <field name="name">Bolovanje do 42d</field>
+        <field name="sequence" eval="108" />
+        <field name="code">BOLOV</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = 0
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_prerasp" model="hr.salary.rule">
+        <field name="name">Preraspodjele</field>
+        <field name="sequence" eval="109" />
+        <field name="code">PRERASP</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = 0
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_roditelj" model="hr.salary.rule">
+        <field name="name">Roditeljsko odsustvo</field>
+        <field name="sequence" eval="110" />
+        <field name="code">ROD_ODS</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = 0
+        </field>
     </record>
 
     <record id="hr_salary_rule_neto" model="hr.salary.rule">
         <field name="name">Neto plata prije poreza</field>
-        <field name="sequence" eval="100" />
+        <field name="sequence" eval="150" />
         <field name="code">NETO</field>
         <field name="category_id" ref="l10n_bs_hr_payroll.NETO" />
         <field name="condition_select">none</field>
         <field name="amount_select">code</field>
         <field name="amount_python_compute">
-result = contract.wage * 0.10
+result = contract.wage
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_bruto" model="hr.salary.rule">
+        <field name="name">Bruto osnovica</field>
+        <field name="sequence" eval="200" />
+        <field name="code">BRUTO</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.BRUTO" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = 0
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_to" model="hr.salary.rule">
+        <field name="name">Topli obrok neoporezivo</field>
+        <field name="sequence" eval="160" />
+        <field name="code">TO</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NAKN" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = 0
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_obust" model="hr.salary.rule">
+        <field name="name">Obustava 1</field>
+        <field name="sequence" eval="160" />
+        <field name="code">OB_1</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.OBUST" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result = 0
         </field>
     </record>
 
@@ -221,7 +493,11 @@ result = categories.BRUTO
         <field name="code">BASEF</field>
         <field name="name">Standardni obračun FBiH </field>
         <field
-            eval="[(6, 0, [ref('hr_salary_rule_neto'), ref('hr_salary_rule_dopr_na'),ref('hr_salary_rule_dopr_iz')])]"
+            eval="[(6, 0, [ref('hr_salary_rule_mr'), ref('hr_salary_rule_nr'), ref('hr_salary_rule_ter'),
+                   ref('hr_salary_rule_dpraz'), ref('hr_salary_rule_r_dpraz'),
+                   ref('hr_salary_rule_to_o'), ref('hr_salary_rule_godis'),
+                   ref('hr_salary_rule_to'), ref('hr_salary_rule_neto'), ref('hr_salary_rule_bruto'),
+                   ref('hr_salary_rule_dopr_na'),ref('hr_salary_rule_dopr_iz')])]"
             name="rule_ids"
         />
         <field name="company_id" ref="base.main_company" />
@@ -276,7 +552,7 @@ result = categories.BRUTO
 
 
     <record id="hr_contract_test01" model="hr.contract">
-        <field name="name">FBiH01 Contract 2020</field>
+        <field name="name">Test radnik FBiH01 Contract 2020</field>
         <field name="state">open</field>
         <field name="department_id" ref="dep_proizvodnja"/>
         <field name="job_id" ref="job_varilac"/>
@@ -292,36 +568,56 @@ result = categories.BRUTO
     </record>
 
     <record id="hr_contract_test02" model="hr.contract">
-        <field name="name">FBiH02 Contract 2020</field>
+        <field name="name">Test Radnik FBiH02 Contract 2022/11-1</field>
         <field name="department_id" ref="dep_proizvodnja"/>
         <field name="job_id" ref="job_brav_cjev_3"/>
         <!-- draft,open,close,cancel -->
         <field name="state">open</field>
-        <field name="date_start" eval="datetime(2020, 2, 2).date()" />
-        <!--
-        <field name="date_end" eval="datetime(2023, 1, 1).date()" />
-        -->
+        <field name="date_start" eval="datetime(2022, 1, 1).date()" />
+        <field name="date_end" eval="datetime(2022, 11, 20).date()" />
         <field name="struct_id" ref="structure_fbih" />
         <!--
         https://www.dfalaw.co.uk/faq_type/what-is-the-difference-between-an-employee-and-a-worker/
         -->
         <field name="structure_type_id" ref="hr_contract.structure_type_employee" />
         <field name="employee_id" ref="hr_employee_bs_fbih02" />
-        <field name="notes">Contract for Test Radnik FBiH02</field>
+        <field name="notes">Contract for Test Radnik FBiH02 do 20.11.2022</field>
         <field eval="1200.00" name="wage" />
+        <field eval="300" name="br_bod" />
+        <field eval="8.00" name="koef_mr" />
+        <field eval="1.5" name="koef_lo" />
     </record>
 
-    <!-- Čekanje - privremeni prekid rada -->
-    <record id="holiday_status_unpaid" model="hr.leave.type">
-        <field name="name">Čekanje</field>
-        <field name="requires_allocation">no</field>
+    <record id="hr_contract_test02_2" model="hr.contract">
+        <field name="name">Test Radnik FBiH02 Contract 2022/11-2</field>
+        <field name="department_id" ref="dep_proizvodnja"/>
+        <field name="job_id" ref="job_brav_cjev_3"/>
+        <!-- draft,open,close,cancel -->
+        <field name="state">open</field>
+        <field name="date_start" eval="datetime(2022, 11, 21).date()" />
+        <field name="struct_id" ref="structure_fbih" />
         <!--
-            <field name="leave_validation_type">both</field>
-            <field name="allocation_validation_type">officer</field>
+        https://www.dfalaw.co.uk/faq_type/what-is-the-difference-between-an-employee-and-a-worker/
         -->
-        <field name="request_unit">hour</field>
-        <field name="unpaid" eval="False"/>
-        <field name="color">5</field>
+        <field name="structure_type_id" ref="hr_contract.structure_type_employee" />
+        <field name="employee_id" ref="hr_employee_bs_fbih02" />
+        <field name="notes">Contract for Test Radnik FBiH02 od 21.11.2022</field>
+        <field eval="1500.00" name="wage" />
+        <field eval="400" name="br_bod" />
+        <field eval="8.00" name="koef_mr" />
+        <field eval="1.5" name="koef_lo" />
     </record>
+
+
+    <!-- hernad ovo treba izbrisati! Public time off
+        <record id="resource_public_time_off_1" model="resource.calendar.leaves">
+            <field name="name">Public Time Off</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="calendar_id" ref="resource.resource_calendar_std"/>
+            <field name="date_from" eval="(datetime.today() + relativedelta(days=+8)).strftime('%Y-%m-%d 07:00:00')"></field>
+            <field name="date_to" eval="(datetime.today() + relativedelta(days=+8)).strftime('%Y-%m-%d 16:00:00')"></field>
+        </record>
+    -->
+
 
 </odoo>
