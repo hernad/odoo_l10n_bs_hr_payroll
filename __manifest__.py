@@ -6,9 +6,14 @@
     'icon': '/l10n_bs_hr_payroll/static/description/icon.png',
     'sequence': 120,
     'summary': 'Bosnian Payroll data (FBiH).',
-    'depends': ["hr", "hr_contract", "payroll"],
+    'depends': ["hr", "hr_contract", "payroll", "base_address_extended", "l10n_bs"],
     'data': [
         "data/hr_payroll_rules.xml",
+        "data/hr_payroll_rules_dopr_iz.xml",
+        "data/hr_payroll_rules_dopr_na.xml",
+        "data/hr_payroll_rules_dopr_iz_na.xml",
+        "data/hr_payroll_rules_detas.xml",
+        "data/hr_payroll_rules_end.xml",
         "data/hr_payroll_rules_delete.xml",
         "views/hr_payroll_contract_view.xml",
         "data/hr_holiday_views.xml",
@@ -16,5 +21,5 @@
     'installable': True,
     'application': False,
     'auto_install': False,
-    'license': 'LGPL-3',
+    'license': 'GPL-3',
 }
