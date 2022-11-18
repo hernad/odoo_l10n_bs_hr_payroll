@@ -104,6 +104,11 @@
         <field name="partner_id" eval="False" />
     </record>
 
+    <record id="contrib_register_por" model="hr.contribution.register">
+        <field name="name">Porez na dohodak FBiH</field>
+        <field name="partner_id" eval="False" />
+    </record>
+
     <record id="contrib_register_pio" model="hr.contribution.register">
         <field name="name">Doprinos PIO FBiH</field>
         <field name="partner_id" eval="False" />
@@ -124,6 +129,11 @@
         <field name="partner_id" eval="False" />
     </record>
 
+    <record id="contrib_register_zdr_k3" model="hr.contribution.register">
+        <field name="name">Doprinos zdravstvo Tuzlanski kanton</field>
+        <field name="partner_id" eval="False" />
+    </record>
+
     <record id="contrib_register_zap_f" model="hr.contribution.register">
         <field name="name">Doprinos zapošljavanje FBiH</field>
         <field name="partner_id" eval="False" />
@@ -135,7 +145,12 @@
     </record>
 
     <record id="contrib_register_zap_k2" model="hr.contribution.register">
-        <field name="name">Doprinos zapošljavanje KSA</field>
+        <field name="name">Doprinos zapošljavanje Kanto Sarajevo</field>
+        <field name="partner_id" eval="False" />
+    </record>
+
+    <record id="contrib_register_zap_k3" model="hr.contribution.register">
+        <field name="name">Doprinos zapošljavanje Tuzlanski kanton</field>
         <field name="partner_id" eval="False" />
     </record>
 
@@ -323,21 +338,78 @@
 
     <record id="hr_salary_rule_rr" model="hr.salary.rule">
         <field name="name">Redovan rad</field>
-        <field name="sequence" eval="10" />
+        <field name="sequence" eval="5" />
         <field name="code">REDRAD</field>
         <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
         <field name="condition_select">none</field>
         <field name="amount_select">code</field>
         <field name="amount_python_compute">
-#odsustva = worked_days.CEKANJE and -worked_days.CEKANJE.number_of_hours
-#odsustva += worked_days.ODMOR and -worked_days.ODMOR.number_of_hours
-odsustva = 0
-radni_sati = worked_days.WORK100 and worked_days.WORK100.number_of_hours
-result_qty = radni_sati - odsustva
+radni_sati = worked_days.TSH_10_SF.number_of_hours + worked_days.TSH_11_S.number_of_hours
+result_qty = radni_sati
 result = contract.br_bod * float(payslip.rule_parameter('VRBOD'))
         </field>
     </record>
 
+    <record id="hr_salary_rule_dpraz" model="hr.salary.rule">
+        <field name="name">Državni praznik</field>
+        <field name="sequence" eval="7" />
+        <field name="code">DPRAZ</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result_qty =  worked_days.DRZAVNI_PRAZNIK and abs(worked_days.DRZAVNI_PRAZNIK.number_of_hours)
+# kao redovan rad
+result = contract.br_bod * float(payslip.rule_parameter('VRBOD'))
+result = round(result, int(payslip.rule_parameter('ZAOK')))
+        </field>
+    </record>
+
+
+    <record id="hr_salary_rule_godis" model="hr.salary.rule">
+        <field name="name">Godišnji odmor</field>
+        <field name="sequence" eval="8" />
+        <field name="code">GODIS</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result_qty =  worked_days.ODMOR and abs(worked_days.ODMOR.number_of_hours)
+# isto se boduje kao redovan rad
+result = contract.br_bod * float(payslip.rule_parameter('VRBOD'))
+result = round(result, int(payslip.rule_parameter('ZAOK')))
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_bolov" model="hr.salary.rule">
+        <field name="name">Bolovanje do 42d (90%)</field>
+        <field name="sequence" eval="9" />
+        <field name="code">BOLOV</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result_qty =  worked_days.BOLOVANJE and abs(worked_days.BOLOVANJE.number_of_hours)
+# redovan rad 90%
+result = contract.br_bod * float(payslip.rule_parameter('VRBOD')) * 0.9
+result = round(result, int(payslip.rule_parameter('ZAOK')))
+        </field>
+    </record>
+
+    <record id="hr_salary_rule_nr" model="hr.salary.rule">
+        <field name="name">Noćni rad</field>
+        <field name="sequence" eval="11" />
+        <field name="code">NOCNI</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+radni_sati = worked_days.TSH_20_NF.number_of_hours + worked_days.TSH_21_N.number_of_hours
+result_qty = radni_sati
+result = contract.br_bod * float(payslip.rule_parameter('VRBOD')) * 1.5
+        </field>
+    </record>
+<!--
     <record id="hr_salary_rule_prerasp" model="hr.salary.rule">
         <field name="name">Preraspodjele</field>
         <field name="sequence" eval="12" />
@@ -346,37 +418,73 @@ result = contract.br_bod * float(payslip.rule_parameter('VRBOD'))
         <field name="condition_select">none</field>
         <field name="amount_select">code</field>
         <field name="amount_python_compute">
-#kompenz_dani = worked_days.CEKANJE and -worked_days.CEKANJE.number_of_hours
-kompenz_dani = 0
-result_qty = kompenz_dani
+result_qty = 0
 result = contract.br_bod * float(payslip.rule_parameter('VRBOD'))
         </field>
     </record>
+-->
 
     <record id="hr_salary_rule_mr" model="hr.salary.rule">
         <field name="name">Minuli rad</field>
-        <field name="sequence" eval="11" />
+        <field name="sequence" eval="12" />
         <field name="code">MINRAD</field>
         <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
         <field name="condition_select">none</field>
         <field name="amount_select">code</field>
         <field name="amount_python_compute">
 result_qty = 1
+zaok = int(payslip.rule_parameter('ZAOK'))
 result_rate = contract.koef_mr
-result = round(result_rules.REDRAD.amount,2) * round(result_rules.REDRAD.quantity,2)
+result = round(result_rules.REDRAD.amount * result_rules.REDRAD.quantity, zaok)
+result += round(result_rules.DPRAZ.amount * result_rules.DPRAZ.quantity, zaok)
+result += round(result_rules.GODIS.amount * result_rules.GODIS.quantity, zaok)
+result += round(result_rules.BOLOV.amount * result_rules.BOLOV.quantity, zaok)
+result += round(result_rules.NOCNI.amount * result_rules.NOCNI.quantity, zaok)
+        </field>
+    </record>
+
+
+    <record id="hr_salary_rule_roditelj" model="hr.salary.rule">
+        <field name="name">Roditeljsko odsustvo (0%)</field>
+        <field name="sequence" eval="15" />
+        <field name="code">ROD_ODS</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result_qty =  worked_days.RODITELJSKO_ODSUSTVO and abs(worked_days.RODITELJSKO_ODSUSTVO.number_of_hours)
+# redovan rad 0%
+result = contract.br_bod * float(payslip.rule_parameter('VRBOD')) * 0.0
+result = round(result, int(payslip.rule_parameter('ZAOK')))
+        </field>
+    </record>
+
+
+    <record id="hr_salary_rule_r_dpraz" model="hr.salary.rule">
+        <field name="name">Rad na državni praznik (+100%)</field>
+        <field name="sequence" eval="17" />
+        <field name="code">R_DPRAZ</field>
+        <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+result_qty =  worked_days.TSH_30_WF and abs(worked_days.TSH_30_WF.number_of_hours)
+result_qty +=  worked_days.TSH_31_WF and abs(worked_days.TSH_31_WF.number_of_hours)
+# kao redovan rad
+result = contract.br_bod * float(payslip.rule_parameter('VRBOD'))
 result = round(result, int(payslip.rule_parameter('ZAOK')))
         </field>
     </record>
 
     <record id="hr_salary_rule_ceka" model="hr.salary.rule">
-        <field name="name">Čekanje</field>
-        <field name="sequence" eval="13" />
+        <field name="name">Čekanje (granski ugovor metalci)</field>
+        <field name="sequence" eval="16" />
         <field name="code">CEKANJE</field>
         <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
         <field name="condition_select">none</field>
         <field name="amount_select">code</field>
         <field name="amount_python_compute">
-result_qty =  -worked_days.CEKANJE and worked_days.CEKANJE.number_of_hours
+result_qty =  worked_days.REST and abs(worked_days.REST.number_of_hours)
 min_met = result_qty * float(payslip.rule_parameter('MNS_MET_FBIH'))
 #min = result_qty * float(payslip.rule_parameter('MNS_FBIH'))
 result = min_met
@@ -385,15 +493,17 @@ result = min_met
 
     <record id="hr_salary_rule_kor_min" model="hr.salary.rule">
         <field name="name">Korekcija - minimum po opštem kolektivnom ugovoru</field>
-        <field name="sequence" eval="13" />
+        <field name="sequence" eval="17" />
         <field name="code">KOREK</field>
         <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
         <field name="condition_select">none</field>
         <field name="amount_select">code</field>
         <field name="amount_python_compute">
-odsustva = worked_days.CEKANJE and -worked_days.CEKANJE.number_of_hours
-odsustva += worked_days.ODMOR and -worked_days.ODMOR.number_of_hours
-radni_sati = worked_days.WORK100 and worked_days.WORK100.number_of_hours
+odsustva = worked_days.BOLOVANJE and abs(worked_days.BOLOVANJE.number_of_hours)
+odsustva += worked_days.ODMOR and abs(worked_days.ODMOR.number_of_hours)
+odsustva += worked_days.RODITELJSKO_ODSUSTVO and abs(worked_days.RODITELJSKO_ODSUSTVO.number_of_hours)
+radni_sati = worked_days.TSH_10_SF.number_of_hours + worked_days.TSH_11_S.number_of_hours
+radni_sati += worked_days.TSH_20_NF.number_of_hours + worked_days.TSH_21_N.number_of_hours
 result_qty = radni_sati - odsustva
 neto = result_qty * (1 + contract.koef_mr / 100.00) * contract.br_bod * float(payslip.rule_parameter('VRBOD'))
 min = result_qty * float(payslip.rule_parameter('MNS_FBIH'))
@@ -409,13 +519,18 @@ result = round(result, int(payslip.rule_parameter('ZAOK')))
 
     <record id="hr_salary_rule_kor_min_met" model="hr.salary.rule">
         <field name="name">Korekcija - minimum po kolektivnom ugovoru METAL</field>
-        <field name="sequence" eval="14" />
+        <field name="sequence" eval="18" />
         <field name="code">KOREK_MET</field>
         <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
         <field name="condition_select">none</field>
         <field name="amount_select">code</field>
         <field name="amount_python_compute">
-result_qty =  worked_days.WORK100 and worked_days.WORK100.number_of_hours
+odsustva = worked_days.BOLOVANJE and abs(worked_days.BOLOVANJE.number_of_hours)
+odsustva += worked_days.ODMOR and abs(worked_days.ODMOR.number_of_hours)
+odsustva += worked_days.RODITELJSKO_ODSUSTVO and abs(worked_days.RODITELJSKO_ODSUSTVO.number_of_hours)
+radni_sati = worked_days.TSH_10_SF.number_of_hours + worked_days.TSH_11_S.number_of_hours
+radni_sati += worked_days.TSH_20_NF.number_of_hours + worked_days.TSH_21_N.number_of_hours
+result_qty = radni_sati - odsustva
 neto = result_qty * (1 + contract.koef_mr / 100.00) * contract.br_bod * float(payslip.rule_parameter('VRBOD'))
 min_met = result_qty * float(payslip.rule_parameter('MNS_MET_FBIH'))
 result = 0
@@ -427,56 +542,7 @@ result = round(result, int(payslip.rule_parameter('ZAOK')))
         </field>
     </record>
 
-    <record id="hr_salary_rule_nr" model="hr.salary.rule">
-        <field name="name">Noćni rad</field>
-        <field name="sequence" eval="15" />
-        <field name="code">NOCNI</field>
-        <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
-        <field name="condition_select">none</field>
-        <field name="amount_select">code</field>
-        <field name="amount_python_compute">
-result_qty = 0
-result = 0
-        </field>
-    </record>
 
-    <record id="hr_salary_rule_dpraz" model="hr.salary.rule">
-        <field name="name">Državni praznik</field>
-        <field name="sequence" eval="16" />
-        <field name="code">DPRAZ</field>
-        <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
-        <field name="condition_select">none</field>
-        <field name="amount_select">code</field>
-        <field name="amount_python_compute">
-result = 0
-        </field>
-    </record>
-
-    <record id="hr_salary_rule_r_dpraz" model="hr.salary.rule">
-        <field name="name">Rad na državni praznik</field>
-        <field name="sequence" eval="17" />
-        <field name="code">R_DPRAZ</field>
-        <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
-        <field name="condition_select">none</field>
-        <field name="amount_select">code</field>
-        <field name="amount_python_compute">
-result_qty = 0
-result = 0
-        </field>
-    </record>
-
-    <record id="hr_salary_rule_ter" model="hr.salary.rule">
-        <field name="name">Terenski rad</field>
-        <field name="sequence" eval="18" />
-        <field name="code">TEREN</field>
-        <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
-        <field name="condition_select">none</field>
-        <field name="amount_select">code</field>
-        <field name="amount_python_compute">
-result_qty = 0
-result = 0
-        </field>
-    </record>
 
     <record id="hr_salary_rule_to" model="hr.salary.rule">
         <field name="name">Topli obrok (neoporeziva naknada)</field>
@@ -486,7 +552,7 @@ result = 0
         <field name="condition_select">none</field>
         <field name="amount_select">code</field>
         <field name="amount_python_compute">
-result_qty =  worked_days.WORK100 and worked_days.WORK100.number_of_days
+result_qty =  worked_days.FOOD and worked_days.FOOD.number_of_days
 # dnevno 1% prosjecne plate FBiH
 result = float(payslip.rule_parameter('PROS_N_P_FBIH')) * 1 / 100.00
 result = round(result, int(payslip.rule_parameter('ZAOK')))
@@ -501,7 +567,7 @@ result = round(result, int(payslip.rule_parameter('ZAOK')))
         <field name="condition_select">none</field>
         <field name="amount_select">code</field>
         <field name="amount_python_compute">
-result_qty =  worked_days.WORK100 and worked_days.WORK100.number_of_days
+result_qty =  worked_days.FOOD and worked_days.FOOD.number_of_days
 to_neopor = float(payslip.rule_parameter('PROS_N_P_FBIH')) * 1 / 100.00
 result = float(payslip.rule_parameter('TO_DAN')) - to_neopor
 if result &lt;= 0:
@@ -511,44 +577,7 @@ result = round(result, int(payslip.rule_parameter('ZAOK')))
         </field>
     </record>
 
-    <record id="hr_salary_rule_godis" model="hr.salary.rule">
-        <field name="name">Godišnji odmor</field>
-        <field name="sequence" eval="21" />
-        <field name="code">GODIS</field>
-        <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
-        <field name="condition_select">none</field>
-        <field name="amount_select">code</field>
-        <field name="amount_python_compute">
-result_qty = 0
-result = 0
-        </field>
-    </record>
 
-    <record id="hr_salary_rule_bolov" model="hr.salary.rule">
-        <field name="name">Bolovanje do 42d</field>
-        <field name="sequence" eval="22" />
-        <field name="code">BOLOV</field>
-        <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
-        <field name="condition_select">none</field>
-        <field name="amount_select">code</field>
-        <field name="amount_python_compute">
-result_qty = 0
-result = 0
-        </field>
-    </record>
-
-    <record id="hr_salary_rule_roditelj" model="hr.salary.rule">
-        <field name="name">Roditeljsko odsustvo</field>
-        <field name="sequence" eval="23" />
-        <field name="code">ROD_ODS</field>
-        <field name="category_id" ref="l10n_bs_hr_payroll.NETO_SUB" />
-        <field name="condition_select">none</field>
-        <field name="amount_select">code</field>
-        <field name="amount_python_compute">
-result_qty = 0
-result = 0
-        </field>
-    </record>
 
     <record id="hr_salary_rule_neto" model="hr.salary.rule">
         <field name="name">Neto plata prije poreza</field>
@@ -563,13 +592,11 @@ result_qty = 1
 result = ( round(result_rules.REDRAD.amount,2) * round(result_rules.REDRAD.quantity,2) * round(result_rules.REDRAD.rate,2)/100 +
            round(result_rules.MINRAD.amount,2) * round(result_rules.MINRAD.quantity,2) * round(result_rules.MINRAD.rate,2)/100 +
            round(result_rules.NOCNI.amount,2) * round(result_rules.NOCNI.quantity,2) * round(result_rules.NOCNI.rate,2)/100 +
-           round(result_rules.PRERASP.amount,2) * round(result_rules.PRERASP.quantity,2) * round(result_rules.PRERASP.rate,2)/100 +
            round(result_rules.CEKANJE.amount,2) * round(result_rules.CEKANJE.quantity,2) * round(result_rules.CEKANJE.rate,2)/100 +
-           round(result_rules.TEREN.amount,2) * round(result_rules.TEREN.quantity,2) * round(result_rules.TEREN.rate,2)/100 +
+           round(result_rules.R_DPRAZ.amount,2) * round(result_rules.R_DPRAZ.quantity,2) * round(result_rules.R_DPRAZ.rate,2)/100 +
            round(result_rules.GODIS.amount,2) * round(result_rules.GODIS.quantity,2) * round(result_rules.GODIS.rate,2)/100 +
            round(result_rules.BOLOV.amount,2) * round(result_rules.BOLOV.quantity,2) * round(result_rules.BOLOV.rate,2)/100 if result_rules.BOLOV else 0 +
            round(result_rules.DPRAZ.amount,2) * round(result_rules.DPRAZ.quantity,2) * round(result_rules.DPRAZ.rate,2)/100 +
-           round(result_rules.R_DPRAZ.amount,2) * round(result_rules.R_DPRAZ.quantity,2) * round(result_rules.R_DPRAZ.rate,2)/100 +
            round(result_rules.TO_O.amount,2) * round(result_rules.TO_O.quantity,2) * round(result_rules.TO_O.rate,2)/100 +
            round(result_rules.KOREK_MET.amount,2) * round(result_rules.KOREK_MET.quantity,2) * round(result_rules.KOREK_MET.rate,2)/100 if result_rules.KOREK_MET else 0 +
            round(result_rules.KOREK.amount,2) * round(result_rules.KOREK.quantity,2) * round(result_rules.KOREK.rate,2)/100 if result_rules.KOREK else 0
@@ -626,6 +653,7 @@ result = 300.00
         <field name="code">POREZ</field>
         <field name="category_id" ref="l10n_bs_hr_payroll.POREZ" />
         <field name="condition_select">none</field>
+        <field name="register_id" ref="contrib_register_por" />
         <field name="amount_select">code</field>
         <field name="amount_python_compute">
 result_rate = float(payslip.rule_parameter('POREZ'))

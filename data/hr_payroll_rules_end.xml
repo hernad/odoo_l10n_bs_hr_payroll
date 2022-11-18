@@ -6,8 +6,8 @@
         <field name="name">Standardni obračun FBiH</field>
         <field
             eval="[(6, 0, [ref('hr_salary_rule_rr'), ref('hr_salary_rule_kor_min'),
-                   ref('hr_salary_rule_prerasp'), ref('hr_salary_rule_mr'),
-                   ref('hr_salary_rule_nr'), ref('hr_salary_rule_ter'), ref('hr_salary_rule_ceka'),
+                   ref('hr_salary_rule_mr'), ref('hr_salary_rule_roditelj'),
+                   ref('hr_salary_rule_nr'), ref('hr_salary_rule_ceka'),
                    ref('hr_salary_rule_dpraz'), ref('hr_salary_rule_r_dpraz'),
                    ref('hr_salary_rule_to_o'), ref('hr_salary_rule_godis'), hr_salary_rule_bolov,
                    ref('hr_salary_rule_to'), ref('hr_salary_rule_neto'), ref('hr_salary_rule_neto_pos'), ref('hr_salary_rule_bruto_osn'),
@@ -24,8 +24,8 @@
         <field name="name">Standardni obračun FBiH - metalska industrija</field>
         <field
             eval="[(6, 0, [ref('hr_salary_rule_rr'), ref('hr_salary_rule_kor_min_met'),
-                   ref('hr_salary_rule_prerasp'), ref('hr_salary_rule_mr'), ref('hr_salary_rule_nr'),
-                   ref('hr_salary_rule_ter'), ref('hr_salary_rule_ceka'),
+                   ref('hr_salary_rule_mr'), ref('hr_salary_rule_nr'), ref('hr_salary_rule_roditelj'),
+                   ref('hr_salary_rule_ceka'),
                    ref('hr_salary_rule_dpraz'), ref('hr_salary_rule_r_dpraz'),
                    ref('hr_salary_rule_to_o'), ref('hr_salary_rule_godis'), hr_salary_rule_bolov,
                    ref('hr_salary_rule_to'), ref('hr_salary_rule_neto'), ref('hr_salary_rule_neto_pos'), ref('hr_salary_rule_bruto_osn'),
