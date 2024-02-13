@@ -1,6 +1,6 @@
 {
     'name': 'Payroll - Bosnia and Herzegovina',
-    'version': '1.2',
+    'version': '1.3.0',
     'author': "bring.out Sarajevo, BiH",
     'category': 'Human Resources/Payroll',
     'icon': '/l10n_bs_hr_payroll/static/description/icon.png',
